@@ -1,0 +1,33 @@
+import 'package:beuty_support/firebase/auth_sevices.dart';
+import 'package:beuty_support/screens/onboarding_screen.dart';
+import 'package:beuty_support/screens/tabs.dart';
+import 'package:flutter/material.dart';
+
+class AuthLayout extends StatelessWidget {
+  const AuthLayout({super.key, this.pageInNotConnected});
+
+  final Widget? pageInNotConnected;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: authServices,
+      builder: (context, authSevices, child) {
+        return StreamBuilder(
+          stream: authSevices.authStateChanges,
+          builder: (context, snapshot) {
+            Widget widget;
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              widget = Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasData) {
+              widget = const Tabs();
+            } else {
+              widget = pageInNotConnected ?? const OnboardingScreen();
+            }
+            return widget;
+          },
+        );
+      },
+    );
+  }
+}
